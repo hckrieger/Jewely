@@ -1,8 +1,13 @@
-﻿using Microsoft.Xna.Framework;
+﻿using Jewely.Screens;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Reusable;
 using Reusable.Services;
+using System.Diagnostics;
+using System.DirectoryServices.ActiveDirectory;
+using System.Reflection.Metadata;
 
 namespace Jewely
 {
@@ -11,8 +16,13 @@ namespace Jewely
 		private GraphicsDeviceManager _graphics;
 		private SpriteBatch _spriteBatch;
 		private DisplayManager displayManager;
-		private BitmapFont title;
+		private InputManager inputManager;
 		private Texture2D box;
+		private Screen playingScreen;
+		private ScreenManager screenManager = new ScreenManager();
+		public const string PLAYING_SCREEN = "PlayingScreen";
+		public const string TITLE_SCREEN = "TitleScreen";
+
 		public Game1()
 		{
 			_graphics = new GraphicsDeviceManager(this);
@@ -28,12 +38,23 @@ namespace Jewely
 
 			base.Initialize();
 			displayManager = new DisplayManager(_graphics);
-			displayManager.SetWindowSize(new Point(256, 144), 3);
-			displayManager.ToggleFullScreen();
-			title = new BitmapFont("Jewely", new Vector2(50, 50), Color.Blue, scale: 2, filePath: "all_8x8");
+			displayManager.SetWindowSize(new Point(320, 180), 3);
+		//	displayManager.ToggleFullScreen();
+
+			inputManager = new InputManager(displayManager);
+
+
+			Services.AddService(typeof(DisplayManager), displayManager);
+			Services.AddService(typeof(ScreenManager), screenManager);
+			Services.AddService(typeof(ContentManager), Content);
+			Services.AddService(typeof(InputManager), inputManager);
+			Services.AddService(typeof(GraphicsDevice), GraphicsDevice);
 
 			box = Utils.RectangleTexture(75, 55, Color.White, GraphicsDevice);
-			
+
+			screenManager.AddScreen(PLAYING_SCREEN, new PlayingScreen(this));
+			screenManager.AddScreen(TITLE_SCREEN, new TitleScreen(this));
+			screenManager.SwitchScreen(TITLE_SCREEN);
 
 		}
 
@@ -49,8 +70,10 @@ namespace Jewely
 			if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
 				Exit();
 
-			// TODO: Add your update logic here
+			inputManager.Update();
 
+			// TODO: Add your update logic here
+			screenManager.Update(gameTime);
 			base.Update(gameTime);
 		}
 
@@ -65,9 +88,9 @@ namespace Jewely
 
 			_spriteBatch.Begin(samplerState: SamplerState.PointClamp);
 
+			screenManager.Draw(_spriteBatch);
 
-
-			title.Draw(t => Content.Load<Texture2D>(t), _spriteBatch);
+			
 		//	_spriteBatch.Draw(box, new Vector2(0,0), Color.White);
 
 
@@ -76,6 +99,7 @@ namespace Jewely
 			_graphics.GraphicsDevice.SetRenderTarget(null);
 
 			_spriteBatch.Begin(samplerState: SamplerState.PointClamp);
+			
 			_spriteBatch.Draw(displayManager.RenderTarget, displayManager.AdjustedViewport, Color.White);
 			_spriteBatch.End();
 

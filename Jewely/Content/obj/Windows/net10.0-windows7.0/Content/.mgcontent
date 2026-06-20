@@ -4,7 +4,7 @@
   <Platform>Windows</Platform>
   <Config />
   <SourceFiles>
-    <File>C:/Users/hckri/source/repos/Game/MonoGame/Games/Jewely/Jewely/Content/all_8x8.png</File>
+    <File>C:/Users/hckri/source/repos/MonoGame/games/Jewely/Jewely/Content/all_8x8.png</File>
   </SourceFiles>
   <DestFiles>
     <File xsi:nil="true" />
