@@ -20,9 +20,9 @@ namespace Jewely
 		private Texture2D box;
 		private Screen playingScreen;
 		private ScreenManager screenManager = new ScreenManager();
+		private RenderableDataBatcher renderable;
 		public const string PLAYING_SCREEN = "PlayingScreen";
 		public const string TITLE_SCREEN = "TitleScreen";
-
 		public Game1()
 		{
 			_graphics = new GraphicsDeviceManager(this);
@@ -42,15 +42,17 @@ namespace Jewely
 			//displayManager.ToggleFullScreen();
 
 			inputManager = new InputManager(displayManager);
-
+			renderable = new RenderableDataBatcher(this);
 
 			Services.AddService(typeof(DisplayManager), displayManager);
 			Services.AddService(typeof(ScreenManager), screenManager);
 			Services.AddService(typeof(ContentManager), Content);
 			Services.AddService(typeof(InputManager), inputManager);
 			Services.AddService(typeof(GraphicsDevice), GraphicsDevice);
+			Services.AddService(typeof(RenderableDataBatcher), renderable);
+		
 
-			box = Utils.RectangleTexture(75, 55, Color.White, GraphicsDevice);
+		box = Utils.RectangleTexture(75, 55, Color.White, GraphicsDevice);
 
 			screenManager.AddScreen(PLAYING_SCREEN, new PlayingScreen(this));
 			screenManager.AddScreen(TITLE_SCREEN, new TitleScreen(this));
@@ -88,11 +90,11 @@ namespace Jewely
 
 			_spriteBatch.Begin(samplerState: SamplerState.PointClamp);
 
-			screenManager.Draw(_spriteBatch);
+			renderable.Draw(_spriteBatch);
 
 			
 		//	_spriteBatch.Draw(box, new Vector2(0,0), Color.White);
-
+			
 
 			_spriteBatch.End();
 
