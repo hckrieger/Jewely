@@ -39,7 +39,7 @@ namespace Jewely
 			base.Initialize();
 			displayManager = new DisplayManager(_graphics);
 			displayManager.SetWindowSize(new Point(320, 180), 3);
-		//	displayManager.ToggleFullScreen();
+			//displayManager.ToggleFullScreen();
 
 			inputManager = new InputManager(displayManager);
 
